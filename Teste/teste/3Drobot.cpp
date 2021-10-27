@@ -3,11 +3,18 @@
 #include <math.h>
 #include <Windows.h>
 #include <iostream>
+#include "tgaload.h"
+
+#define MAX_NO_TEXTURES 4
+
+#define BRICK_TEXTURE 0
+#define CUBE_TEXTURE 1
+
+
 
 using namespace std;
 
-using namespace std;
-
+GLuint texture_id[MAX_NO_TEXTURES];
 float angle = 0.0f;
 
 void callKeyboard(unsigned char KEY, int x, int y)
@@ -20,15 +27,19 @@ void callKeyboard(unsigned char KEY, int x, int y)
 		cout << angle << endl;
 
 	}
-		
+
 	else
 		if (KEY == 'd')
 		{
 			angle += 20.0;
 			cout << angle << endl;
 		}
-			
 
+	if (KEY == 'r')
+	{
+		angle = 0;
+		cout << angle << endl;
+	}
 	glutPostRedisplay();
 }
 
@@ -56,42 +67,108 @@ void init(void)
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 
-	float globalLight[] = { 0.4f, 0.4f, 0.4f, 1.f };
+	GLfloat globalLight[] = { 0.4f, 0.4f, 0.4f, 1.f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalLight);
 
+	GLfloat mat_specular0[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_diffuse0[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_ambient0[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_shininess0 = { 100.0 };
+
+	GLfloat mat_specular1[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_diffuse1[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_ambient1[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_shininess1 = { 100.0 };
+
+	GLfloat mat_specular2[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_diffuse2[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_ambient2[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_shininess2 = { 100.0 };
 
 
-	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_ambient[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_shininess = { 100.0 };
-	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat light_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 10.0, 10.0, 10.0, 0.0 };
+	GLfloat light_ambient0[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse0[] = { 0.5, 0.5, 0.5, 1.0 };
+	GLfloat light_specular0[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position0[] = { 10.0, 10.0, 10.0, 0.0 };
 
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	GLfloat light_ambient1[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse1[] = { 0.5, 0.5, 0.5, 1.0 };
+	GLfloat light_specular1[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position1[] = { -10.0, 10.0, 10.0, 0.0 };
 
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
+	GLfloat light_ambient2[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse2[] = { 0.5, 0.5, 0.5, 1.0 };
+	GLfloat light_specular2[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position2[] = { 0.0, -10.0, 10.0, 0.0 };
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient0);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular0);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position1);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient1);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse1);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular1);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position2);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient2);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse2);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular2);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular0);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient0);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse0);
+	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess0);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular1);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient1);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse1);
+	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess1);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular2);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient2);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse2);
+	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess2);
+
+
 
 	glEnable(GL_SMOOTH);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_DEPTH_TEST);
 
+
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
+
+	
+	glDepthFunc(GL_LEQUAL);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+}
+
+void initTexture(void)
+{
+
+	// Habilita o uso de textura 
+	glEnable(GL_TEXTURE_2D);
+
+	// Define quantas texturas serão usadas no programa 
+	glGenTextures(1, texture_id);  // 1 = uma textura;
+									
+	// Define o número da textura do quad.
+	texture_id[BRICK_TEXTURE] = 1001;
+
+	// Define que tipo de textura será usada
+	glBindTexture(GL_TEXTURE_2D, BRICK_TEXTURE);
+
+	// carrega a uma imagem TGA 
+	image_t temp_image_1;
+	tgaLoad((char*)"textures/stone.tga", &temp_image_1, TGA_FREE | TGA_LOW_QUALITY);
 
 
 }
+
 
 
 void drawHead(void)
@@ -99,6 +176,7 @@ void drawHead(void)
 	GLUquadricObj* Head;
 	Head = gluNewQuadric();
 
+	
 	glPushMatrix();
 	glTranslatef(0.0, 6.5, 0.0);
 	glScalef(2.0, 1.8, 1.0);
@@ -283,10 +361,12 @@ void drawFeet(void)
 
 }
 
-
-
 void drawRobot(void)
 {
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
+
+	
 	glLoadIdentity();
 	glColor3f(1.0, 0.0, 0.0);
 
@@ -294,6 +374,9 @@ void drawRobot(void)
 
 	
 	glPushMatrix();
+
+	glBindTexture(GL_TEXTURE_2D, BRICK_TEXTURE);
+
 	glTranslatef(0.0, 0.0, 0.0);
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	drawTorso();
@@ -333,7 +416,6 @@ void Display(void)
 
 
 
-
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
@@ -342,7 +424,9 @@ int main(int argc, char** argv)
 	init();
 	glutReshapeFunc(myReshape);
 	glutKeyboardFunc(callKeyboard);
+	initTexture();
 	glutDisplayFunc(Display);
+	
 	
 
 	glutMainLoop();
